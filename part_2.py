@@ -30,7 +30,7 @@ def event_handler(body: str):
 
     if thin_event.type == "order.shipped":
         order_id = thin_event.related_object.id
-        order = client.retireve_order(order_id)
+        order = client.retrieve_order(order_id)
         print(f"  Created a database record for {order.id} w/ {order.num_items=}")
 
     elif thin_event.type == "order.delivery_attempted":
@@ -47,7 +47,7 @@ def event_handler(body: str):
 
     elif thin_event.type == "movie.started":
         movie_id = thin_event.related_object.id
-        movie = client.retireve_movie(movie_id)
+        movie = client.retrieve_movie(movie_id)
         print(f"  Someone started watching {movie.title}")
 
     elif thin_event.type == "movie.completed":

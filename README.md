@@ -8,15 +8,91 @@ To help our users keep track of the state of their account, we've recently launc
 
 Initial user response has been good, but we strive to be the sharpest needle in the cactus and we haven't won yet. Specifically, we want to improve the experience of handling incoming events and are looking for fresh-eyed feedback.
 
-Cactus Corp sends "thin" events to our users, which contain minimal info but provide tools to fetch the full event data. You can read more in the `DOCS.md` file.
+## Docs
+
+Cactus Corp sends "thin" events to our users, which contain minimal info but provide tools to fetch the full event data. Here is the full documentation for those shapes.
+
+### Objects
+
+We send events related to the the following object types:
+
+```py
+class Movie:
+    id: str
+    title: str
+    release_year: int
+```
+
+```py
+class Order:
+    id: str
+    created: str
+    num_items: int
+    cost_cents: int
+    delivery_date: str
+```
+
+### Event Types
+
+With our new V2 event parsing system, we've got classes for every event type. We send you the "pushed" version and you can "pull" the full version. They're identical **except** the pull version includes the event's `Data`
+
+| type                       | related object | data properties                               |
+| -------------------------- | -------------- | --------------------------------------------- |
+| `order.shipped`            | `Order`        | `shipping_service`                            |
+| `order.delivery_attempted` | `Order`        | `success`, `attempt_num`, `delivery_location` |
+| `order.lost`               | None           | `last_seen_city`                              |
+| `movie.started`            | `Movie`        | `date`                                        |
+| `movie.completed`          | `Movie`        | `user`, `rating`                              |
+
+#### Instance Methods
+
+Each "pushed" event supports the following methods:
+
+```py
+def pull(self):
+    """
+    returns the full event type corresponding to this push event
+    """
+
+def fetch_related_object(self):
+    """
+    retrieves the related object by id, if applicable
+    """
+```
+
+### Client
+
+The CactusCilent is a convenient way to fetch data from CactusCorp. It handles authentication, retries, etc. It's got the following shape:
+
+```py
+class CactusClient:
+    @deprecated
+    def parse_event_v1(self, body: str) -> GenericThinEvent:
+        ...
+
+    def parse_event_v2(self, body: str) -> PushedThinEvents:
+        ...
+
+    def retrieve_event(self, id_: str) -> BaseThinEvent:
+        ...
+
+    def retrieve_order(self, id_: str) -> Order:
+        ...
+
+    def retrieve_movie(self, id_: str) -> Movie:
+        ...
+```
 
 ## Part 1
 
-Our webhook handler has been throwing runtime errors. We've been ignoring a lot of in-editor warnings, so that's probably related.
+Today, you'll be using your cactus expertise to help a user fix bugs in their webhook handling code. It's been throwing runtime errors and they're struggling to resolve them. They've also been ignoring a lot of in-editor warnings, so that's probably related.
 
-Can you use the new parsing method (`parse_event_v2()`) and remove all the type checker errors (noted by `fixme` comments) and runtime errors? Also, we don't want any of those manual `cast` calls - all the types should be present in the data.
+Please:
 
-Lastly, we'd love to handle events with the type `movie.completed`. Print out what rating the user gave and the title of the movie.
+1. Swap `parse_event_v1()` to `parse_event_v2()`.
+2. Resolve any type errors.
+3. Resolve any runtime errors.
+4. Add a new handler branch for the `movie.started` event. It should print the user's rating and the movie' title. Bear in mind that some data is on the event itself while other data is on the related object.
 
 ## Part 2
 
@@ -29,7 +105,7 @@ from cactus_sdk import CactusHandler
 
 class MyHandler(CactusHandler):
     def on_some_event(self, thin_event: SomePushedEvent):
-        print('handling some.event!')
+        print('handling "some.event"!')
 
     def on_other(self, thin_event: BaseThinEvent):
         print('handling unrecognized event')

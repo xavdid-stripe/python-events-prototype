@@ -228,7 +228,7 @@ class CactusClient:
         except KeyError:
             raise ValueError(f"404: event {id_} not found")
 
-    def retireve_order(self, id_: str) -> "Order":
+    def retrieve_order(self, id_: str) -> "Order":
         if not id_.startswith("ord_"):
             raise ValueError(f"unable to fetch order with invalid id: {id_}")
 
@@ -237,7 +237,7 @@ class CactusClient:
         except KeyError:
             raise ValueError(f"404: order {id_} not found")
 
-    def retireve_movie(self, id_: str) -> "Movie":
+    def retrieve_movie(self, id_: str) -> "Movie":
         if not id_.startswith("mov_"):
             raise ValueError(f"unable to fetch movie with invalid id: {id_}")
 
