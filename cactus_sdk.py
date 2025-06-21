@@ -33,8 +33,6 @@ class BaseThinEvent:
 # the manual class today
 @dataclass
 class GenericThinEvent(BaseThinEvent):
-    id: str
-    type: str
     related_object: Optional[RelatedObject] = None
 
     @staticmethod
@@ -248,7 +246,7 @@ class CactusClient:
 
 
 class CactusHandler:
-    def handle(self, body: str) -> bool:
+    def handle(self, body: str) -> None:
         event = CactusClient().parse_event_v2(body)
 
         if event.type == "order.shipped":
@@ -285,7 +283,7 @@ class CactusHandler:
     def on_movie_completed(self, thin_event: MovieCompletedPushedEvent):
         return self.on_other(thin_event)
 
-    def on_other(self, thin_event: BaseThinEvent) -> NoReturn:
+    def on_other(self, thin_event: BaseThinEvent):
         raise NotImplementedError(f"No implemented handler for {thin_event.type}")
 
 

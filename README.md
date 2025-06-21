@@ -34,6 +34,8 @@ class Order:
 
 ### Event Types
 
+<!-- TODO: make this actual json? -->
+
 With our new V2 event parsing system, we've got classes for every event type. We send you the "pushed" version and you can "pull" the full version. They're identical **except** the pull version includes the event's `Data`
 
 | type                       | related object | data properties                               |
@@ -62,7 +64,7 @@ def fetch_related_object(self):
 
 ### Client
 
-The CactusCilent is a convenient way to fetch data from CactusCorp. It handles authentication, retries, etc. It's got the following shape:
+The CactusClient is a convenient way to fetch data from CactusCorp. It handles authentication, retries, etc. It's got the following shape:
 
 ```py
 class CactusClient:
@@ -90,9 +92,10 @@ Today, you'll be using your cactus expertise to help a user fix bugs in their we
 Please:
 
 1. Swap `parse_event_v1()` to `parse_event_v2()`.
-2. Resolve any type errors.
-3. Resolve any runtime errors.
-4. Add a new handler branch for the `movie.started` event. It should print the user's rating and the movie' title. Bear in mind that some data is on the event itself while other data is on the related object.
+2. Remove manual `cast` calls.
+3. Resolve any type errors.
+4. Resolve any runtime errors.
+5. Add a new handler branch for the `movie.completed` event. It should print the user's rating and the movie's title. Bear in mind that some data is on the event itself while other data is on the related object.
 
 ## Part 2
 

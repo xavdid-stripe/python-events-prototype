@@ -6,9 +6,10 @@ from cactus_sdk import INCOMING_EVENTS, CactusClient, OrderLostEvent, OrderShipp
 Instructions:
 
 1. Swap `parse_event_v1()` to `parse_event_v2()`.
-2. Resolve any type errors.
-3. Resolve any runtime errors.
-4. Add a new handler branch for the `movie.started` event. It should print the user's rating and the movie' title. Bear in mind that some data is on the event itself while other data is on the related object.
+2. Remove manual `cast` calls.
+3. Resolve any type errors.
+4. Resolve any runtime errors.
+5. Add a new handler branch for the `movie.completed` event. It should print the user's rating and the movie's title. Bear in mind that some data is on the event itself while other data is on the related object.
 """
 
 client = CactusClient()
@@ -21,7 +22,7 @@ def event_handler(body: str):
     if thin_event.type == "order.shiped":
         order_id = thin_event.related_object.id  # fixme
         order = client.retrieve_order(order_id)
-        print(f"  Created a database record for {order.id} w/ {order.num_items=}")
+        print(f"  Created a database record for {order.id} w/ {order.num_items=} items")
 
     elif thin_event.type == "order.delivery_attempted":
         event = cast(OrderShippedEvent, client.retrieve_event(thin_event.id))
@@ -30,9 +31,9 @@ def event_handler(body: str):
         )
 
     elif thin_event.type == "order.lost":
-        order_id = thin_event.related_object.id  # fixme
+        order_related_object = thin_event.related_object
         event = cast(OrderLostEvent, client.retrieve_event(thin_event.id))
-        order = client.retrieve_order(order_id)
+        order = client.retrieve_order(order_related_object.id)  # fixme
         print(
             f"  An order was last seen in {event.data.last_seen_city}... we have no additional information"
         )
@@ -41,6 +42,8 @@ def event_handler(body: str):
         movie_id = thin_event.related_object.id  # fixme
         movie = client.retrieve_order(movie_id)
         print(f"  Someone started watching {movie.title}")  # fixme
+
+    # elif ... # add a new branch!
 
     else:
         raise ValueError(f'unhandled event with type "{thin_event.type}"')
@@ -52,5 +55,5 @@ if __name__ == "__main__":
         try:
             event_handler(body_str)
         except:
-            print("  failed to handle:", body_str, "\n")
+            print(f"  failed to handle: {body_str}\n")
             raise
