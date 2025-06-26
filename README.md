@@ -10,7 +10,7 @@ Initial user response has been good, but we strive to be the sharpest needle in 
 
 ## Docs
 
-Cactus Corp sends "thin" events to our users, which contain minimal info but provide tools to fetch the full event data. The initial payload looks like this (with some variation):
+Cactus Corp sends "thin" events to our users, which contain minimal info but provide tools to fetch the full event data. The initial payload looks like this:
 
 ```json
 {
@@ -24,9 +24,9 @@ Cactus Corp sends "thin" events to our users, which contain minimal info but pro
 ```
 
 > [!IMPORTANT]
-> Not all events types have a related object
+> Not all events types have a related object. See the table below for more information.
 
-There's a corresponding `Event` object you can retrieve (or "pull") from the Cactus API:
+There's a corresponding `Event` object you can retrieve (or "pull") from the Cactus API. It's identical as the thin event, but it includes the event's `data`:
 
 ```json
 {
