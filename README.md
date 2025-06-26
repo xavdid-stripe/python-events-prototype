@@ -10,18 +10,41 @@ Initial user response has been good, but we strive to be the sharpest needle in 
 
 ## Docs
 
-Cactus Corp sends "thin" events to our users, which contain minimal info but provide tools to fetch the full event data. Here is the full documentation for those shapes.
+Cactus Corp sends "thin" events to our users, which contain minimal info but provide tools to fetch the full event data. The initial payload looks like this (with some variation):
 
-### Objects
+```json
+{
+  "id": "evt_123",
+  "type": "order.shipped",
+  "related_object": {
+    "id": "ord_456",
+    "type": "order"
+  }
+}
+```
+
+> [!IMPORTANT]
+> Not all events types have a related object
+
+There's a corresponding `Event` object you can retrieve (or "pull") from the Cactus API:
+
+```json
+{
+  "id": "evt_123",
+  "type": "order.shipped",
+  "related_object": {
+    "id": "ord_456",
+    "type": "order"
+  },
+  "data": {
+    "shipping_service": "usps"
+  }
+}
+```
+
+### Related Objects
 
 We send events related to the the following object types:
-
-```py
-class Movie:
-    id: str
-    title: str
-    release_year: int
-```
 
 ```py
 class Order:
@@ -32,9 +55,14 @@ class Order:
     delivery_date: str
 ```
 
-### Event Types
+```py
+class Movie:
+    id: str
+    title: str
+    release_year: int
+```
 
-<!-- TODO: make this actual json? -->
+### Event Types
 
 With our new V2 event parsing system, we've got classes for every event type. We send you the "pushed" version and you can "pull" the full version. They're identical **except** the pull version includes the event's `Data`
 
