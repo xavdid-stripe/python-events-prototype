@@ -1,11 +1,4 @@
-from typing import cast
-
-from cactus_sdk import (
-    INCOMING_EVENTS,
-    CactusClient,
-    CactusHandler,
-    OrderDeliveryAttemptedEvent,
-)
+from cactus_sdk import INCOMING_EVENTS, CactusClient, CactusHandler
 
 """
 Instructions:
@@ -34,7 +27,7 @@ def event_handler(body: str):
         print(f"  Created a database record for {order.id} w/ {order.num_items=}")
 
     elif thin_event.type == "order.delivery_attempted":
-        event = cast(OrderDeliveryAttemptedEvent, client.retrieve_event(thin_event.id))
+        event = thin_event.pull()
         print(
             f"  Order {event.related_object.id} has been delivered after {event.data.attempt_num} attempt(s)!"
         )
@@ -54,7 +47,7 @@ def event_handler(body: str):
         event = thin_event.pull()
         movie = thin_event.fetch_related_object()
         print(
-            f"User {event.data.user} just finished {movie.title} ({movie.release_year}) and rated it {event.data.rating} stars."
+            f"  User {event.data.user} just finished {movie.title} ({movie.release_year}) and rated it {event.data.rating} stars."
         )
 
     else:
